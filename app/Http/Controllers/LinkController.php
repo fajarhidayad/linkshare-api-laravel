@@ -2,58 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Link;
+use App\Http\Requests\StoreLinkRequest;
+use App\Services\LinkService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
-use function PHPUnit\Framework\isNull;
 
 class LinkController extends Controller
 {
-    public function show(Request $request)
+    protected $linkService;
+
+    public function __construct(LinkService $linkService)
     {
-        $userId = $request->user()->id;
-
-        $links = DB::table("links")
-            ->where('user_id', $userId)
-            ->get();
-
-        return response()->json([
-            "data" => $links
-        ]);
+        $this->linkService = $linkService;
     }
 
-    public function create(Request $request)
+    public function show(): JsonResponse
     {
-        $request->validate([
-            "platform" => ["required", "string", "max:100"],
-            "link" => ["required", "string", "url:http,https"],
-        ]);
-
-        $link = Link::create([
-            'platform' => $request->platform,
-            'link' => $request->link,
-            'user_id' => $request->user()->id,
-        ]);
-
-        return response()->json(null, 201);
+        return $this->linkService->getLinks();
     }
 
-    public function destroy(Request $request)
+    public function create(StoreLinkRequest $request): JsonResponse
     {
-        $deleted = DB::table("links")
-            ->where("id", $request->id)
-            ->delete();
+        $data = $request->validated();
+        return $this->linkService->createLink($data);
+    }
 
-        if ($deleted < 1) {
-            return response(null, 404)
-                ->json([
-                    "message" => "data not found"
-                ]);
-        }
+    public function update(int $id, StoreLinkRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        return $this->linkService->updateLink($id, $data);
+    }
 
-        return response()->json([
-            "message" => 'success'
-        ]);
+    public function destroy(Request $request): JsonResponse
+    {
+        return $this->linkService->deleteLink($request->id);
     }
 }

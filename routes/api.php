@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get("/links", [LinkController::class, 'show']);
     Route::post("/links", [LinkController::class, 'create']);
+    Route::put("/links/{id}", [LinkController::class, 'update']);
     Route::delete("/links/{id}", [LinkController::class, 'destroy']);
 
     Route::get("/profile", [ProfileController::class, 'show']);
