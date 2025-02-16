@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo pdo_pgsql
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
 # Copy Laravel files
 COPY . .
@@ -18,12 +18,8 @@ COPY . .
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN composer install --no-dev --optimize-autoloader
 
-# Create a non-root user
-RUN useradd -m laravel
-USER laravel
-
 # Set permissions for storage & bootstrap
-RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose PHP-FPM port
 EXPOSE 9000
