@@ -27,10 +27,10 @@ class LinkController extends Controller
         return $this->linkService->createLink($data);
     }
 
-    public function update(int $id, StoreLinkRequest $request): JsonResponse
+    public function update(StoreLinkRequest $request): JsonResponse
     {
         $data = $request->validated();
-        return $this->linkService->updateLink($id, $data);
+        return $this->linkService->updateLink($data);
     }
 
     public function destroy(Request $request): JsonResponse

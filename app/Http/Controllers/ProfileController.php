@@ -23,8 +23,8 @@ class ProfileController extends Controller
 
     public function update(UpdateProfileRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        return $this->profileService->updateProfile($data);
+        $request->validated();
+        return $this->profileService->updateProfile($request);
     }
 
     public function showPublicProfile(Request $request): JsonResponse

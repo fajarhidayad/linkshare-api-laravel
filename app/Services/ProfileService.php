@@ -42,14 +42,22 @@ class ProfileService
 
     public function updateProfile(UpdateProfileRequest $data): JsonResponse
     {
+        $user = Auth::user();
+        $file = $data->file('profilePicture');
+        $filePath = null;
+        if (!is_null($file)) {
+            $fileName = time() . '_' . $file->getFilename() . '.' . $file->getClientOriginalExtension();
+            $filePath = $file->storeAs('images', $fileName, 'public');
+        }
+
         DB::table('users')
-            ->where('id', Auth::id())
+            ->where('id', $user->id)
             ->update([
+                'username' => $data['username'],
                 'first_name' => $data['firstName'],
                 'last_name' => $data['lastName'],
-                'email' => $data['email'],
                 'bio' => $data['bio'],
-                'profile_picture_url' => $data['profilePictureUrl'],
+                'profile_picture_url' => is_null($filePath) ? $user->profile_picture_url : $filePath,
             ]);
 
         return response()->json([

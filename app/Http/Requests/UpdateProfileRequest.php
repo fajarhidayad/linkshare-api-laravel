@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\UniqueEmail;
+use App\Rules\UniqueUsername;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProfileRequest extends FormRequest
@@ -24,9 +26,10 @@ class UpdateProfileRequest extends FormRequest
         return [
             "firstName" => ["required", "string", "max:100"],
             "lastName" => ["required", "string", "max:100"],
-            "email" => ["required", "string", "email"],
+            "username" => ["required", "string", "max:100", new UniqueUsername($this->user()->id)],
+            "email" => ["required", "string", "email", new UniqueEmail($this->user()->id)],
             "bio" => ["nullable", "string", "max:255"],
-            "profilePictureUrl" => ["string", "url", "nullable"]
+            "profilePicture" => ["mimes:jpeg,jpg,png", "max:1024"]
         ];
     }
 }

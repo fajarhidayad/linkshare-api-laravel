@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Link;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LinkService
 {
@@ -33,16 +34,26 @@ class LinkService
         return response()->json([], JsonResponse::HTTP_CREATED);
     }
 
-    public function updateLink(int $id, array $data): JsonResponse
+    public function updateLink(array $data): JsonResponse
     {
-        $link = $this->getLink($id);
-        if (!$link) {
-            return response()->json([
-                'message' => 'Link not found'
-            ], JsonResponse::HTTP_NOT_FOUND);
-        }
+        $user = Auth::user();
 
-        $link->update($data);
+        DB::transaction(function () use ($user, $data) {
+            DB::table('links')->where('user_id', '=', $user->id)->delete();
+
+            $linksData = array_map(function ($link) use ($user) {
+                return [
+                    'user_id' => $user->id,
+                    'link' => $link['url'],
+                    'platform' => $link['platform'],
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            }, $data['links']);
+
+            DB::table('links')->insert($linksData);
+        });
+
         return response()->json([
             'message' => 'success'
         ], JsonResponse::HTTP_ACCEPTED);

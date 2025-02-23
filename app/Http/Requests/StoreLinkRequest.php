@@ -22,8 +22,9 @@ class StoreLinkRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "platform" => ["required", "string", "max:100"],
-            "link" => ["required", "string", "url:http,https"],
+            "links" => ["required", "array"],
+            "links.*.platform" => ["required", "string", "max:100"],
+            "links.*.url" => ["required", "url"],
         ];
     }
 }
