@@ -28,7 +28,7 @@ class ProfileService
         }
 
         $links = DB::table("links")
-            ->select(['id', 'platform', 'link'])
+            ->select(['id', 'platform', 'url'])
             ->where("user_id", $user->id)
             ->get();
 

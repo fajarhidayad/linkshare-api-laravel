@@ -9,7 +9,7 @@ class Link extends Model
 {
     protected $fillable = [
         "platform",
-        "link",
+        "url",
         "user_id",
     ];
 

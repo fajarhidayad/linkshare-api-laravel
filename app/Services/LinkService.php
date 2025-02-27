@@ -44,7 +44,7 @@ class LinkService
             $linksData = array_map(function ($link) use ($user) {
                 return [
                     'user_id' => $user->id,
-                    'link' => $link['url'],
+                    'url' => $link['url'],
                     'platform' => $link['platform'],
                     'created_at' => now(),
                     'updated_at' => now()
